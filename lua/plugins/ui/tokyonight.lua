@@ -43,6 +43,8 @@ return {
       hl["NoiceCmdlinePopupBorderCmdline"] = hl["FloatBorder"]
       hl["NoiceCmdlinePopupBorder"] = hl["FloatBorder"]
       hl["NoicePopupmenuBorder"] = hl["FloatBorder"]
+      hl["NeoTreeNormal"] = { bg = "none" }
+      hl["NeoTreeNormalNC"] = hl["NeoTreeNormal"]
     end
   },
   config = function(_, opts)

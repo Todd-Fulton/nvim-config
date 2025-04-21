@@ -137,3 +137,11 @@ vim.api.nvim_create_autocmd("FileType", {
     })
   end
 })
+
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "qf" },
+  callback = function ()
+    vim.bo.buflisted = false
+  end
+})

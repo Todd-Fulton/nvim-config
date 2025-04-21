@@ -49,7 +49,7 @@ return {
           },
         },
         indent = {
-          enable = false,
+          enable = true,
           disable = { "lua", "c", },
         },
         textobjects = {

@@ -52,25 +52,19 @@ function M.exclusive(plugin, ...)
   return function()
     if M.get_plugin(plugin) == nil then return false end
     for _, n in ipairs(nos) do
-      if M.get_plugin(n) ~= nil then
-        return false
-      end
+      if M.get_plugin(n) ~= nil then return false end
       return true
     end
   end
 end
 
-local enable_bufkeys = M.is_installed("bufferline.nvim")
-
+local enable_bufkeys = M.is_installed "bufferline.nvim"
 
 -- TODO: Lift logic to packs of common plugins for which only one can be installed
 local enable_fugit2 = M.exclusive("fugit2.nvim", "neogit")
 local enable_neogit = M.exclusive("neogit", "fugit2.nvim")
 
-
-function M.cmd(command)
-  return "<cmd>" .. command .. "<cr>"
-end
+function M.cmd(command) return "<cmd>" .. command .. "<cr>" end
 
 -- TODO: Set up dynamic key bindings using conditions, events, and which-key expand
 M.mappings = {
@@ -80,10 +74,10 @@ M.mappings = {
   },
   {
     mode = { "n", "v" }, -- NORMAL and VISUAL mode
-    { "<leader>q", "<cmd>confirm q<cr>",  desc = "Quit Window" },
+    { "<leader>q", "<cmd>confirm q<cr>", desc = "Quit Window" },
     { "<leader>Q", "<cmd>confirm qa<cr>", desc = "Exit" },
-    { "<leader>w", "<cmd>w<cr>",          desc = "Write", icon = "" },
-    { "<leader>W", "<cmd>wa<cr>",         desc = "Write all", icon = "󰷬" },
+    { "<leader>w", "<cmd>w<cr>", desc = "Write", icon = "" },
+    { "<leader>W", "<cmd>wa<cr>", desc = "Write all", icon = "󰷬" },
   },
   {
     mode = { "n", "i" },
@@ -91,118 +85,117 @@ M.mappings = {
     { "<C-s>", "<Esc><CMD>silent! update! | redraw<CR>", desc = "Save File" }, -- change description but the same command
 
     -- switch buffer
-
   },
   {
     mode = { "n" },
     -- Buffer manipulation
-    { "<Leader>b",  group = "Buffers" },
-    -- { "<Leader>bb", M.cmd("BufferLinePick"),       desc = "Pick" },
-    { "<Leader>bn", ":bn<CR>",        desc = "Next",  icon = "↪",      silent = true },
-    { "<Leader>bp", ":bp<CR>",        desc = "Prev",  icon = "↩",      silent = true },
-    { "<Leader>bl", "<C-6>",          desc = "Last", icon = "",        silent = true },
-    { "]b",         ":bn<CR>",        desc = "Next buffer", silent = true },
-    { "[b",         ":bp<CR>",        desc = "Prev buffer", silent = true },
-    -- { "<Leader>br", M.cmd("BufferLineCloseRight"), desc = "Close buffers to the Left" },
-    -- { "<Leader>bl", M.cmd("BufferLineCloseLeft"),  desc = "Close buffers to the Right" },
-    -- { "<C-m>",      M.cmd("BufferLineCycleNext"),  desc = "Next" },
-    -- { "<C-n>",      M.cmd("BufferLineCyclePrev"),  desc = "Prev" },
+    { "<Leader>b", group = "Buffers" },
+    { "<Leader>bb", M.cmd "BufferLinePick", cond = enable_bufkeys, desc = "Pick" },
+    { "<Leader>bn", ":bn<CR>", desc = "Next", icon = "↪", silent = true },
+    { "<Leader>bp", ":bp<CR>", desc = "Prev", icon = "↩", silent = true },
+    { "<Leader>bl", "<C-6>", desc = "Last", icon = "", silent = true },
+    { "]b", ":bn<CR>", desc = "Next buffer", cond = function() return not enable_bufkeys() end, silent = true },
+    { "[b", ":bp<CR>", desc = "Prev buffer", cond = function() return not enable_bufkeys() end, silent = true },
+    { "]b", M.cmd "BufferLineCycleNext", desc = "Next buffer", cond = enable_bufkeys, silent = true },
+    { "[b", M.cmd "BufferLineCyclePrev", desc = "Prev buffer", cond = enable_bufkeys, silent = true },
+    { "<Leader>br", M.cmd "BufferLineCloseRight", cond = enable_bufkeys, desc = "Close buffers to the Left" },
+    { "<Leader>bl", M.cmd "BufferLineCloseLeft", cond = enable_bufkeys, desc = "Close buffers to the Right" },
+    { "<C-]>", M.cmd "BufferLineCycleNext", cond = enable_bufkeys, desc = "Next" },
+    { "<C-[>", M.cmd "BufferLineCyclePrev", cond = enable_bufkeys, desc = "Prev" },
     {
       "<Leader>c",
-      function()
-        mini_confirm(require("mini.bufremove").delete, 0, false)
-      end,
+      function() mini_confirm(require("mini.bufremove").delete, 0, false) end,
       desc = "Close buffer",
     },
 
     -- Toggles
-    { "<Leader>t",  group = "Toggle" },
+    { "<Leader>t", group = "Toggle" },
     {
       "<Leader>th",
-      function()
-        vim.v.hlsearch = vim.v.hlsearch == 0 and 1 or 0
-      end,
+      function() vim.v.hlsearch = vim.v.hlsearch == 0 and 1 or 0 end,
       desc = "Toggle search highlights",
     },
 
     -- Git
-    { "<Leader>g",  group = "Git" },
-    { "<Leader>gv", M.cmd("Fugit2"),      desc = "Open Fugit2",     cond = enable_fugit2 },
-    { "<Leader>gd", M.cmd("Fugit2Diff"),  desc = "Open diff view",  cond = enable_fugit2 },
-    { "<Leader>gb", M.cmd("Fugit2Blame"), desc = "Open blame view", cond = enable_fugit2 },
-    { "<Leader>gg", M.cmd("Fugit2Graph"), desc = "Open graph view", cond = enable_fugit2 },
+    { "<Leader>g", group = "Git" },
+    { "<Leader>gv", M.cmd "Fugit2", desc = "Open Fugit2", cond = enable_fugit2 },
+    { "<Leader>gd", M.cmd "Fugit2Diff", desc = "Open diff view", cond = enable_fugit2 },
+    { "<Leader>gb", M.cmd "Fugit2Blame", desc = "Open blame view", cond = enable_fugit2 },
+    { "<Leader>gg", M.cmd "Fugit2Graph", desc = "Open graph view", cond = enable_fugit2 },
+
+    -- Lazy packages
+    { "<Leader>p", group = "Plugins" },
+    { "<Leader>pu", M.cmd "Lazy update", desc = "Update Lazy" },
+    { "<Leader>ps", M.cmd "Lazy sync", desc = "Sync Lazy" },
   },
   -- Splits
   {
     mode = { "n" },
-    { "<C-\\>",     "<C-w>v",              desc = "Split verticle" },
-    { "<C-->",      "<C-w>s",              desc = "Split horizontal" },
-    { "<Leader>s",  group = "Split/Select", icon = "" },
-    { "<Leader>sv", "<C-w>v",              desc = "Split verticle" },
-    { "<Leader>sh", "<C-w>s",              desc = "Split horizontal" },
-    { "<Leader>s=", "<C-w>=",              desc = "Make split equal size" },
-    { "<Leader>sx", "<CMD>close<CR>",      desc = "Close split" },
+    { "<C-\\>", "<C-w>v", desc = "Split verticle" },
+    { "<C-->", "<C-w>s", desc = "Split horizontal" },
+    { "<Leader>s", group = "Split/Select", icon = "" },
+    { "<Leader>sv", "<C-w>v", desc = "Split verticle" },
+    { "<Leader>sh", "<C-w>s", desc = "Split horizontal" },
+    { "<Leader>s=", "<C-w>=", desc = "Make split equal size" },
+    { "<Leader>sx", "<CMD>close<CR>", desc = "Close split" },
   },
   {
     mode = { "t", "n" },
-    { "<C-h>", "<CMD>wincmd h<CR>",        desc = "Move to left split", },
-    { "<C-j>", "<CMD>wincmd j<CR>",        desc = "Move to split above", },
-    { "<C-k>", "<CMD>wincmd k<CR>",        desc = "Move to split below", },
-    { "<C-l>", "<CMD>wincmd l<CR>",        desc = "Move to right split", },
-    { "<M-]>", "<C-\\><C-n><CMD>tabn<CR>", desc = "Tab next",            silent = true },
-    { "<M-[>", "<C-\\><C-n><CMD>tabp<CR>", desc = "Tab prev",            silent = true },
+    { "<C-h>", "<CMD>wincmd h<CR>", desc = "Move to left split" },
+    { "<C-j>", "<CMD>wincmd j<CR>", desc = "Move to split above" },
+    { "<C-k>", "<CMD>wincmd k<CR>", desc = "Move to split below" },
+    { "<C-l>", "<CMD>wincmd l<CR>", desc = "Move to right split" },
+    { "<M-]>", "<C-\\><C-n><CMD>tabn<CR>", desc = "Tab next", silent = true },
+    { "<M-[>", "<C-\\><C-n><CMD>tabp<CR>", desc = "Tab prev", silent = true },
     {
       "<M-\\>",
       function()
-        vim.cmd("vsplit")
+        vim.cmd "vsplit"
         local winh = vim.api.nvim_get_current_win()
         local bufh = vim.api.nvim_create_buf(true, true)
         vim.api.nvim_win_set_buf(winh, bufh)
         vim.api.nvim_set_current_win(winh)
-        vim.cmd("term")
+        vim.cmd "term"
       end,
-      desc = "Open a terminal (horizontal)"
+      desc = "Open a terminal (horizontal)",
     },
     {
       "<M-->",
       function()
-        vim.cmd("split")
+        vim.cmd "split"
         local winh = vim.api.nvim_get_current_win()
         local bufh = vim.api.nvim_create_buf(true, true)
         vim.api.nvim_win_set_buf(winh, bufh)
         vim.api.nvim_set_current_win(winh)
-        vim.cmd("term")
+        vim.cmd "term"
       end,
-      desc = "Open a terminal (vertical)"
+      desc = "Open a terminal (vertical)",
     },
     {
       "<M-=>",
       function()
-        vim.cmd("$tabnew")
+        vim.cmd "$tabnew"
         local winh = vim.api.nvim_get_current_win()
         local bufh = vim.api.nvim_create_buf(true, true)
         vim.api.nvim_win_set_buf(winh, bufh)
         vim.api.nvim_set_current_win(winh)
-        vim.cmd("term")
+        vim.cmd "term"
       end,
-      desc = "Open a terminal (vertical)"
+      desc = "Open a terminal (vertical)",
     },
   },
   -- TODO: Need to do sowmthing smarter
-  { "<M-h>", apply(resize_split, "left"),  silent = true },
-  { "<M-j>", apply(resize_split, "down"),  silent = true },
-  { "<M-k>", apply(resize_split, "up"),    silent = true },
+  { "<M-h>", apply(resize_split, "left"), silent = true },
+  { "<M-j>", apply(resize_split, "down"), silent = true },
+  { "<M-k>", apply(resize_split, "up"), silent = true },
   { "<M-l>", apply(resize_split, "right"), silent = true },
   {
     mode = { "t" },
-    { "<esc>", "<C-\\><C-n>",      { buffer = 0 } },
+    { "<esc>", "<C-\\><C-n>", { buffer = 0 } },
     { "<C-w>", "<C-\\><C-n><C-w>", { buffer = 0 } },
-  }
+  },
 }
 
-
-function M.add(maps)
-  table.insert(M.mappings, maps)
-end
+function M.add(maps) table.insert(M.mappings, maps) end
 
 return M

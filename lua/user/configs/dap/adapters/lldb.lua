@@ -1,5 +1,5 @@
  -- TODO: get dynamically using env.PATH
-local lldb_vscode_exe = "/opt/rocm/lib/llvm/bin/lldb-dap"
+local lldb_vscode_exe = "lldb-dap"
 
 return {
   type = 'executable',

@@ -84,7 +84,7 @@ return {
             },
             {
               "<Leader>dS",
-              function() require("dap").close() end,
+              function() require("dap").terminate() end,
               icon = " ",
               desc = "Stop",
               buffer = ev.buf,
@@ -140,7 +140,7 @@ return {
             },
             {
               "<M-s>",
-              function() require("dap").close() end,
+              function() require("dap").terminate() end,
               icon = " ",
               desc = "Stop",
               buffer = ev.buf,

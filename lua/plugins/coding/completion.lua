@@ -116,6 +116,7 @@ return {
           { name = "path" },
           { name = "buffer",  keyword_length = 4, max_item_count = 5 },
           { name = "git" },
+          { name = "emoji" },
         },
         -- configure lspkind
         ---@diagnostic disable-next-line: missing-fields
