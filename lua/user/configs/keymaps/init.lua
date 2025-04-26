@@ -138,6 +138,7 @@ M.mappings = {
     { "<Leader>sh", "<C-w>s", desc = "Split horizontal" },
     { "<Leader>s=", "<C-w>=", desc = "Make split equal size" },
     { "<Leader>sx", "<CMD>close<CR>", desc = "Close split" },
+    { "<Leader>sm", "<CMD>MaximizerToggle<CR>", desc = "Toggle Maximizer" },
   },
   {
     mode = { "t", "n" },
